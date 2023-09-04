@@ -10,7 +10,11 @@
     },
     "preview": {
       "distribution": "internal",
-      "channel": "preview"
+      "channel": "preview",
+      "env": {
+        "EXPO_PUBLIC_ONBOARDING_SERVICE_ENDPOINT": "https://sylviebackendapi-onboarding-zhaxc3bjca-nw.a.run.app/onboarding",
+        "EXPO_PUBLIC_CHAT_SERVICE_ENDPOINT": "https://sylviebackendapi-chat-zhaxc3bjca-nw.a.run.app/chat"
+      }
     },
     "production": {
       "channel": "production"
