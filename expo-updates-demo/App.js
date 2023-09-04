@@ -3,10 +3,12 @@ import { StyleSheet, Text, View } from 'react-native';
 
 export default function App() {
   const onboardingEndpoint = process.env.EXPO_PUBLIC_ONBOARDING_SERVICE_ENDPOINT
+  const chatEndpoint = process.env.EXPO_PUBLIC_CHAT_SERVICE_ENDPOINT
   return (
     <View style={styles.container}>
       <Text>Open up App.js to start working on your app!</Text>
       <Text>Onboarding endpoint: {onboardingEndpoint}</Text>
+      <Text>Chat endpoint: {chatEndpoint}</Text>
       <StatusBar style="auto" />
     </View>
   );
