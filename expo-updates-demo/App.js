@@ -8,7 +8,7 @@ export default function App() {
     <View style={styles.container}>
       <Text>Open up App.js to start working on your app!</Text>
       <Text>Onboarding endpoint: {onboardingEndpoint}</Text>
-      {/* <Text>Chat endpoint: {chatEndpoint}</Text> */}
+      <Text>Chat endpoint: {chatEndpoint}</Text>
       <StatusBar style="auto" />
     </View>
   );
