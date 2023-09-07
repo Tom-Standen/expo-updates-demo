@@ -16,7 +16,8 @@
     "expo-updates": "~0.18.12",
     "expo-notifications": "~0.20.1",
     "expo-device": "~5.4.0",
-    "expo-constants": "~14.4.2"
+    "expo-constants": "~14.4.2",
+    "expo-dev-client": "~2.4.8"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

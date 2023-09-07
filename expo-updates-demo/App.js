@@ -35,6 +35,17 @@ async function sendPushNotification(expoPushToken) {
   });
 }
 
+async function sendLocalNotification() {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: 'Local Notification Title',
+      body: 'Local Notification Body',
+      data: { someData: 'goes here' },
+    },
+    trigger: { seconds: 2 },
+  });
+}
+
 async function registerForPushNotificationsAsync() {
   let token;
   if (Device.isDevice) {
@@ -69,31 +80,38 @@ async function registerForPushNotificationsAsync() {
 }
 
 export default function App() {
-  const [expoPushToken, setExpoPushToken] = useState('');
+  const [expoPushToken, setExpoPushToken] = useState(null);
   const [notification, setNotification] = useState(false);
-  // const notificationListener = useRef();
-  // const responseListener = useRef();
 
-  // // useEffect(() => {
-  // //   registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+  useEffect(() => {
+    const setupNotifications = async () => {
+      try {
+        const token = await registerForPushNotificationsAsync();
+        setExpoPushToken(token);
 
-  // //   notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-  // //     setNotification(notification);
-  // //   });
+        const notifListener = Notifications.addNotificationReceivedListener(notification => {
+          setNotification(notification);
+        });
 
-  // //   responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-  // //     console.log(response);
-  // //   });
+        const respListener = Notifications.addNotificationResponseReceivedListener(response => {
+          console.log(response);
+        });
 
-  // //   return () => {
-  // //     Notifications.removeNotificationSubscription(notificationListener.current);
-  // //     Notifications.removeNotificationSubscription(responseListener.current);
-  // //   };
-  // // }, []);
+        return () => {
+          Notifications.removeNotificationSubscription(notifListener);
+          Notifications.removeNotificationSubscription(respListener);
+        };
+      } catch (error) {
+        console.error("Failed to setup notifications:", error);
+      }
+    };
+
+    setupNotifications();
+  }, []);
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'space-around' }}>
-      <Text>Your expo push token: {expoPushToken}</Text>
+      <Text>Your expo push token: {expoPushToken ? expoPushToken.data : 'Fetching...'}</Text>
       <View style={{ alignItems: 'center', justifyContent: 'center' }}>
         <Text>Title: {notification && notification.request.content.title} </Text>
         <Text>Body: {notification && notification.request.content.body}</Text>
@@ -102,7 +120,10 @@ export default function App() {
       <Button
         title="Press to Send Notification"
         onPress={async () => {
-          await sendPushNotification(expoPushToken);
+          // if (expoPushToken) {
+          //   await sendPushNotification(expoPushToken.data); // Assuming 'data' is what you want to send.
+          // }
+          await sendLocalNotification();
         }}
       />
     </View>
