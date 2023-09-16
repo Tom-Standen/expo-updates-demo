@@ -2,7 +2,7 @@
   "expo": {
     "name": "expo-updates-demo",
     "slug": "expo-updates-demo",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -37,6 +37,9 @@
     },
     "updates": {
       "url": "https://u.expo.dev/6f570ca5-01af-436e-92e0-f9a5f7e2c809"
-    }
+    },
+    "plugins": [
+      "expo-localization"
+    ]
   }
 }

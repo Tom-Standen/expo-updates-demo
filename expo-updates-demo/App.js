@@ -3,6 +3,7 @@ import { Text, View, Button, Platform } from 'react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import Constants from "expo-constants";
+import { getCalendars } from 'expo-localization';
 
 
 Notifications.setNotificationHandler({
@@ -82,6 +83,7 @@ async function registerForPushNotificationsAsync() {
 export default function App() {
   const [expoPushToken, setExpoPushToken] = useState(null);
   const [notification, setNotification] = useState(false);
+  const { timeZone } = getCalendars()[0];
 
   useEffect(() => {
     const setupNotifications = async () => {
@@ -112,6 +114,7 @@ export default function App() {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'space-around' }}>
       <Text>Your expo push token: {expoPushToken ? expoPushToken.data : 'Fetching...'}</Text>
+      <Text>Timezone: {timeZone}</Text>
       <View style={{ alignItems: 'center', justifyContent: 'center' }}>
         <Text>Title: {notification && notification.request.content.title} </Text>
         <Text>Body: {notification && notification.request.content.body}</Text>
