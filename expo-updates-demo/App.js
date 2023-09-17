@@ -1,134 +1,63 @@
-import { useState, useEffect, useRef } from 'react';
-import { Text, View, Button, Platform } from 'react-native';
-import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
-import Constants from "expo-constants";
-import { getCalendars } from 'expo-localization';
-
-
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-  }),
-});
-
-
-// Can use this function below or use Expo's Push Notification Tool from: https://expo.dev/notifications
-async function sendPushNotification(expoPushToken) {
-  const message = {
-    to: expoPushToken,
-    sound: 'default',
-    title: 'Original Title',
-    body: 'And here is the body!',
-    data: { someData: 'goes here' },
-  };
-
-  await fetch('https://exp.host/--/api/v2/push/send', {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Accept-encoding': 'gzip, deflate',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(message),
-  });
-}
-
-async function sendLocalNotification() {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: 'Local Notification Title',
-      body: 'Local Notification Body',
-      data: { someData: 'goes here' },
-    },
-    trigger: { seconds: 2 },
-  });
-}
-
-async function registerForPushNotificationsAsync() {
-  let token;
-  if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
-    }
-    token = await Notifications.getExpoPushTokenAsync({
-      projectId: Constants.expoConfig.extra.eas.projectId,
-    });
-    console.log(token);
-  } else {
-    alert('Must use physical device for Push Notifications');
-  }
-
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
-  }
-
-  return token;
-}
+import React, { useState, useEffect } from 'react';
+import { KeyboardAvoidingView, FlatList, Platform, StyleSheet, TextInput, View, Keyboard } from 'react-native';
+import { ProgressBar, Text } from 'react-native-paper';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareFlatList, KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default function App() {
-  const [expoPushToken, setExpoPushToken] = useState(null);
-  const [notification, setNotification] = useState(false);
-  const { timeZone } = getCalendars()[0];
 
-  useEffect(() => {
-    const setupNotifications = async () => {
-      try {
-        const token = await registerForPushNotificationsAsync();
-        setExpoPushToken(token);
-
-        const notifListener = Notifications.addNotificationReceivedListener(notification => {
-          setNotification(notification);
-        });
-
-        const respListener = Notifications.addNotificationResponseReceivedListener(response => {
-          console.log(response);
-        });
-
-        return () => {
-          Notifications.removeNotificationSubscription(notifListener);
-          Notifications.removeNotificationSubscription(respListener);
-        };
-      } catch (error) {
-        console.error("Failed to setup notifications:", error);
-      }
-    };
-
-    setupNotifications();
-  }, []);
+  const messages = [];
+  for (let i = 1; i <= 50; i++) {
+      messages.push({
+          id: i,
+          text: "This is message number " + i + "."
+      });
+  }
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'space-around' }}>
-      <Text>Your expo push token: {expoPushToken ? expoPushToken.data : 'Fetching...'}</Text>
-      <Text>Timezone: {timeZone}</Text>
-      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Title: {notification && notification.request.content.title} </Text>
-        <Text>Body: {notification && notification.request.content.body}</Text>
-        <Text>Data: {notification && JSON.stringify(notification.request.content.data)}</Text>
-      </View>
-      <Button
-        title="Press to Send Notification"
-        onPress={async () => {
-          // if (expoPushToken) {
-          //   await sendPushNotification(expoPushToken.data); // Assuming 'data' is what you want to send.
-          // }
-          await sendLocalNotification();
-        }}
-      />
-    </View>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
+          <KeyboardAwareFlatList
+            data={messages}
+            style={{ flex: 1 }}
+            renderItem={({ item }) => (
+              <View >
+                <Text>{item.text}</Text>
+              </View>
+            )}
+            keyExtractor={item => item.id.toString()}
+            extraScrollHeight={10}
+          />
+
+          <ProgressBar progress={0.5} color={'#6200ee'} style={styles.progressBar} />
+
+          <TextInput
+            style={styles.textInput}
+            placeholder="Type a message..."
+          />
+        </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    padding: 10,
+    alignItems: 'center',
+  },
+  progressBar: {
+    marginVertical: 10,
+  },
+  textInput: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    margin: 10,
+    borderRadius: 5,
+  },
+});
