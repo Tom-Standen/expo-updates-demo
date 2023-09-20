@@ -16,7 +16,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.tomstanden.expoupdatesdemo"
+      "bundleIdentifier": "com.tomstanden.expoupdatesdemo",
+      "usesAppleSignIn": true
     },
     "android": {
       "adaptiveIcon": {
