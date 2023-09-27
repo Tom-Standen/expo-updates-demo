@@ -8,6 +8,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, TextInput, Keyboard, Platform, KeyboardAvoidingView, FlatList, Text } from 'react-native';
 
 export default App = (props) => {
+  // FOR STEVEY 
+  // - Most of the below code I've tried to take from react-native-gifted-chat which i've tested and it does adjust the keyboard correctly 
+  // - there are fairly well-documented issues with using KeyboardAvoidingView and FlatList from 'react-native' but most of the advice out there is to use 'react-native-keyboard-aware-scroll-view'
+  // - uncommented code at the bottom is my attempt to use the KeyboardAwareFlatList from 'react-native-keyboard-aware-scroll-view' but also no luck
+  
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [containerHeight, setContainerHeight] = useState(null);
   const initialLayoutRef = useRef(true);
